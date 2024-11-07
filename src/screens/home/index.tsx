@@ -146,7 +146,7 @@ const HomeScreen = () => {
                                     console.log(page, "page Not Update");
                                 }
                             }}
-                            // onEndReachedThreshold={0.5}
+                            onEndReachedThreshold={0.5}
                             estimatedItemSize={200}
                             onMomentumScrollBegin={() => setIsFetchingMore(false)}
                             ListHeaderComponent={
