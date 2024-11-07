@@ -134,7 +134,7 @@ const HomeScreen = () => {
                         <AnimatedFlashListCustom
                             numColumns={2}
                             data={
-                                productsListBySearch?.length > 0 && serachKeybaord?.length > 0
+                                productsListBySearch?.length > 0 || serachKeybaord?.length > 0
                                     ? productsListBySearch
                                     : productsList.products
                             }
