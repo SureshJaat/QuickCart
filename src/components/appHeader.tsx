@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
         marginBottom: verticalScale(10),
     },
     greetingText: {
-        fontSize: moderateScale(22),
+        fontSize: moderateScale(18),
         color: colors.almostWhite,
         fontFamily: boldManjari,
     },

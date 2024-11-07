@@ -17,7 +17,7 @@ const CartItem = ({ item }: any) => {
             <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1 }}>
                 <Image source={{ uri: item?.thumbnail, priority: Image.priority.high, }} style={styles.image} resizeMode='cover' />
                 <View style={styles.infoContainer}>
-                    <Text style={styles.priceText}>${item?.price}</Text>
+                    <Text style={styles.priceText}>${item?.price} x {quantity}</Text>
                     <Text style={styles.titleText}>{item?.title}</Text>
                     <Text style={styles.stockText}>Stock: {item?.stock}</Text>
                 </View>
@@ -29,11 +29,11 @@ const CartItem = ({ item }: any) => {
                     }
                 }}
                     disabled={quantity >= item?.stock}>
-                    <Image source={add} style={{ height: verticalScale(18), width: horizontalScale(18) }} resizeMode='contain' />
+                    <Image source={add} style={{ height: verticalScale(15), width: horizontalScale(15) }} resizeMode='contain' />
                 </TouchableOpacity>
                 <Text style={{ paddingVertical: 15, alignSelf: 'center' }}>{quantity}</Text>
                 <TouchableOpacity onPress={() => handleCart('remove')}>
-                    <Image source={subtract} style={{ height: verticalScale(18), width: horizontalScale(18) }} resizeMode='contain' />
+                    <Image source={subtract} style={{ height: verticalScale(15), width: horizontalScale(15) }} resizeMode='contain' />
                 </TouchableOpacity>
             </View>
         </View>
@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start'
     },
     image: {
-        height: 80,
-        width: 80,
+        height: moderateScale(65),
+        width: moderateScale(65),
         borderRadius: 40,
         marginRight: 10,
         borderWidth: 0
@@ -71,16 +71,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     priceText: {
-        fontSize: 16,
+        fontSize: moderateScale(12),
         fontWeight: '500',
         fontFamily: regularPoppins,
         color: '#6CC51D', // Green for price
     },
     titleText: {
-        fontSize: 14,
+        fontSize: moderateScale(14),
         fontWeight: '600',
         fontFamily: regularPoppins,
-        color: '#333', // Dark color for title
+        color: '#000000', // Dark color for title
         marginVertical: 2,
     },
     stockText: {

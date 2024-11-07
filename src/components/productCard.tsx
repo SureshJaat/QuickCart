@@ -4,10 +4,11 @@ import Animated, { Easing, useAnimatedStyle, useSharedValue, withSequence, withT
 import { useSelector } from 'react-redux';
 import { favoriteSelector, quantitySelector, setCartData, setFavoriteData } from '../redux/slice/cartSlice/cartSlice';
 import { horizontalScale, moderateScale, verticalScale } from '../styles/responsive';
-import { cart, heartEmpty, heartFill } from '../utils/images';
+import { add, cart, heartEmpty, heartFill, subtract } from '../utils/images';
 import { useAppDispatch } from '../redux/reduxHooks/hooks';
-import { regularManjari, regularPoppins } from '../utils/typography';
+import { boldManjari, regularManjari, regularPoppins } from '../utils/typography';
 import Image from 'react-native-fast-image';
+import colors from '../styles/colors';
 
 
 interface ProductCardProps {
@@ -70,14 +71,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, }) => {
                         disabled={quantity >= item?.stock}
                     >
                         <>
-                            <Image source={cart} style={styles.cartIcon} />
+                            <Image tintColor={colors.freshGreen} source={cart} resizeMode='contain' style={styles.cartIcon} />
                             <Text style={styles.cartText}>Add to cart</Text>
                         </>
                     </TouchableOpacity>
                 ) : (
                     <View style={styles.quantityContainer}>
                         <TouchableOpacity onPress={() => handleCart('remove')}>
-                            <Text style={styles.quantityButton}>-</Text>
+                            <Image source={subtract} resizeMode='contain' style={styles.cartAction} />
                         </TouchableOpacity>
                         <Text style={styles.quantityText}>{quantity}</Text>
                         <TouchableOpacity
@@ -87,7 +88,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, }) => {
                                     handleCart('add');
                                 }
                             }}>
-                            <Text style={styles.quantityButton}>+</Text>
+                            <Image source={add} resizeMode='contain' style={styles.cartAction} />
                         </TouchableOpacity>
                     </View>
                 )}
@@ -102,13 +103,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 1)',
         overflow: 'hidden',
         margin: 10,
-        width: '45%',
+        width: '90%',
         alignItems: 'center',
         position: 'relative',
     },
     heartIcon: {
-        height: 20,
-        width: 20,
+        height: moderateScale(20),
+        width: moderateScale(20),
 
     },
     image: {
@@ -120,9 +121,11 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: moderateScale(13),
-        fontWeight: '700',
+        fontWeight: '500',
         color: '#000000',
-        fontFamily: regularManjari
+        fontFamily: boldManjari,
+        lineHeight: verticalScale(18),
+        textAlign: 'center'
     },
     price: {
         fontSize: moderateScale(14),
@@ -152,23 +155,29 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 8
+        gap: horizontalScale(12),
     },
     cartIcon: {
-        resizeMode: 'contain',
+        height: moderateScale(18),
+        width: moderateScale(18),
+    },
+    cartAction: {
         height: moderateScale(15),
         width: moderateScale(15),
         tintColor: '#6CC51D',
     },
     cartText: {
-        fontSize: 14,
+        fontSize: moderateScale(12),
         fontWeight: '700',
         color: '#010101',
-        fontFamily: regularManjari
+        fontFamily: regularPoppins
     },
     quantityContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
+        flex: 1,
+        marginHorizontal: horizontalScale(20)
     },
     quantityButton: {
         fontSize: 20,
@@ -179,8 +188,8 @@ const styles = StyleSheet.create({
     quantityText: {
         fontSize: moderateScale(12),
         fontWeight: '500',
-        color: '#868889',
-        fontFamily: regularManjari,
+        color: '#000000',
+        fontFamily: regularPoppins,
         marginHorizontal: horizontalScale(10),
     },
     discount: {

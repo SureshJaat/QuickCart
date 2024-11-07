@@ -1,16 +1,16 @@
-import {View, StyleSheet, ActivityIndicator} from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import React from 'react';
 import colors from '../styles/colors';
 
 interface simleLoaderProps {
-  sizedata?: any;
+  sizedata?: 'large' | 'small';
   color?: string;
-  style?: {[x: string | number]: string | number};
+  style?: { [x: string | number]: string | number };
 }
 const SimpleLoader: React.FC<simleLoaderProps> = ({
   sizedata = 'large',
   style,
-  color = colors.green,
+  color = colors.freshGreen,
 }) => {
   return (
     <View style={style ? [style] : [styles.container]}>

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import SafeAreaContainer from '../../layouts/safeAreaContainer';
 import AppHeader from '../../components/appHeader';
 import CartItem from '../../components/cartItem';
@@ -7,6 +7,8 @@ import { useAppSelector } from '../../redux/reduxHooks/hooks';
 import { selectCartList } from '../../redux/slice/cartSlice/cartSlice';
 import OrderSummary from '../../components/summary';
 import CustomButton from '../../components/common/customButton';
+import { AnimatedFlashList } from "@shopify/flash-list";
+
 
 const deliveryFee: number = 2.00
 
@@ -25,13 +27,14 @@ const CartTab: React.FC = () => {
   return (
     <SafeAreaContainer>
       <View style={styles.container}>
-        <AppHeader title="Shopping Cart" type="cart" />
+        <AppHeader title={`Shopping Cart (${cartData.length})`} type="cart" />
         {cartData.length > 0 ? (
           <>
-            <FlatList
+            <AnimatedFlashList
+              estimatedItemSize={150}
               data={cartData}
               renderItem={({ item }) => <CartItem item={item} />}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item, index) => index.toString()}
               contentContainerStyle={styles.flatListContent}
               showsVerticalScrollIndicator={false}
             />

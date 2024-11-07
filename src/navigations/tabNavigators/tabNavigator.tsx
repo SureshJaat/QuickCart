@@ -37,20 +37,5 @@ const TabNavigator = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  tabBar: {
-    height: '10%',
-    paddingHorizontal: 10,
-    paddingVertical: 10
-  },
-  icon: {
-    width: horizontalScale(80),
-    height: verticalScale(50),
-  },
-  iconFocused: {
-    width: horizontalScale(80),
-    height: verticalScale(50),
-  },
-});
 
 export default TabNavigator;

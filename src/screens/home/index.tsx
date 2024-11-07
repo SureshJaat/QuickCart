@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import { AnimatedFlashList } from "@shopify/flash-list";
 import Animated, { Extrapolation, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import AppHeader from '../../components/appHeader';
 import ProductCard from '../../components/productCard';
@@ -9,6 +10,8 @@ import { getDashBoardDataBySearch, getPrdouctListData } from '../../redux/slice/
 import colors from '../../styles/colors';
 import { rightArrow } from '../../utils/images';
 import useSearch, { UseSearchResult } from '../../hooks/useSearchWithPagination';
+import { boldManjari } from '../../utils/typography';
+import { horizontalScale, moderateScale } from '../../styles/responsive';
 
 interface Product {
     id: number;
@@ -19,6 +22,7 @@ interface Product {
     isInCart: boolean;
     quantity: number;
 }
+const AnimatedFlashListCustom = Animated.createAnimatedComponent(AnimatedFlashList);
 
 const HomeScreen = () => {
     const dispatch = useAppDispatch();
@@ -30,11 +34,10 @@ const HomeScreen = () => {
     const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [serachKeybaord, setSerachKeybaord] = useState<string>('');
+    const scrollY = useSharedValue(0);
 
     // Filter data based on search query  frontend
     const { filteredData, handleSearchChange } = useSearch(productsList.products);
-
-    console.log(filteredData?.length)
 
     const getList = async (pageNum: number): Promise<void> => {
         if (pageNum > 0 && isFetchingMore) return;
@@ -75,7 +78,7 @@ const HomeScreen = () => {
 
         setSerachKeybaord(keyboard);
         if (searchTimeout) clearTimeout(searchTimeout);
-        setSearchTimeout(setTimeout(() => getListBySearch(keyboard), 1000));
+        setSearchTimeout(setTimeout(() => getListBySearch(keyboard), 700));
     };
 
     const handleQuantityChange = useCallback((index: number, type: string): void => {
@@ -90,13 +93,11 @@ const HomeScreen = () => {
         }));
     }, [productsList.products]);
 
-    const scrollY = useSharedValue(0);
 
-    const onScroll = useAnimatedScrollHandler({
-        onScroll: (event) => {
+    const onScrollData = useAnimatedScrollHandler(
+        (event) => {
             scrollY.value = event.contentOffset.y;
-        },
-    });
+        },);
 
 
     const animatedStyle = useAnimatedStyle(() => {
@@ -127,41 +128,56 @@ const HomeScreen = () => {
                     <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', }}>
                         <ActivityIndicator size="large" color={colors.freshGreen} />
                     </View>
-                ) : (
-                    <Animated.FlatList
-                        maxToRenderPerBatch={10}
-                        windowSize={5}
-                        data={productsListBySearch?.length > 0 && serachKeybaord?.length > 0 ? productsListBySearch : productsList.products}
-                        onEndReached={() => {
-                            console.log(productsList.products.length, productsList.total, "productsList.products.length, productsList.total")
-                            if (!isFetchingMore && !serachKeybaord && productsList.products.length < productsList.total) setPage((prevPage) => prevPage + 1);
-                        }}
-                        onEndReachedThreshold={0.5}
-                        onMomentumScrollBegin={() => setIsFetchingMore(false)} // Reset fetching flag when scrolling begins
-                        ListHeaderComponent={
-                            <View style={[styles.header, { paddingTop: headerHeiht }]}>
-                                <Text style={styles.headerText}>Featured Products</Text>
-                                <Image source={rightArrow} resizeMode="contain" style={styles.headerIcon} />
-                            </View>
-                        }
-                        ListFooterComponent={isFetchingMore ? <ActivityIndicator size="small" color={colors.freshGreen} /> : null}
-                        renderItem={({ item, index }) => (
-                            <ProductCard
-                                item={item}
-                                handleQuantityChange={(type: string) => handleQuantityChange(index, type)}
-                            />
-                        )}
-                        keyExtractor={(item, index) => index.toString()}
-                        numColumns={2}
-                        onScroll={onScroll}
-                        contentContainerStyle={styles.flatListContent}
-                        showsVerticalScrollIndicator={false}
-                        ListEmptyComponent={
-                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                <Text>No products found</Text>
-                            </View>}
-                    />
-                )}
+                ) :
+
+                    (
+                        <AnimatedFlashListCustom
+                            numColumns={2}
+                            data={
+                                productsListBySearch?.length > 0 && serachKeybaord?.length > 0
+                                    ? productsListBySearch
+                                    : productsList.products
+                            }
+                            onEndReached={() => {
+                                // console.log(productsList.products.length, productsList.total, "productsList.products.length, productsList.total");
+                                if (!isFetchingMore && !serachKeybaord && productsList.products.length < productsList.total) {
+                                    setPage((prevPage) => prevPage + 1);
+                                } else {
+                                    console.log(page, "page Not Update");
+                                }
+                            }}
+                            // onEndReachedThreshold={0.5}
+                            estimatedItemSize={200}
+                            onMomentumScrollBegin={() => setIsFetchingMore(false)}
+                            ListHeaderComponent={
+                                <View style={[styles.header, { paddingTop: headerHeiht }]}>
+                                    <Text style={styles.headerText}>Featured Products</Text>
+                                    <Image source={rightArrow} resizeMode="contain" style={styles.headerIcon} />
+                                </View>
+                            }
+                            ListFooterComponent={
+                                isFetchingMore ? <ActivityIndicator size="small" color={colors.freshGreen} /> : null
+                            }
+                            renderItem={({ item, index }) => (
+                                <ProductCard
+                                    item={item}
+                                    handleQuantityChange={(type: string) => handleQuantityChange(index, type)}
+                                />
+                            )}
+                            keyExtractor={(item, index) => index?.toString()}
+                            contentContainerStyle={{
+                                paddingHorizontal: horizontalScale(10),
+                                paddingBottom: 20,
+                            }}
+                            showsVerticalScrollIndicator={false}
+                            ListEmptyComponent={
+                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text>No products found</Text>
+                                </View>
+                            }
+                            onScroll={onScrollData}
+                        />
+                    )}
             </View>
         </SafeAreaContainer>
     );
@@ -179,9 +195,10 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     headerText: {
-        fontSize: 18,
+        fontSize: moderateScale(18),
         fontWeight: '600',
         color: '#000',
+        fontFamily: boldManjari
     },
     headerIcon: {
         height: 15,
