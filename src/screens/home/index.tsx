@@ -41,12 +41,15 @@ const HomeScreen = () => {
 
     const getList = async (pageNum: number): Promise<void> => {
         if (pageNum > 0 && isFetchingMore) return;
+        console.log("calllll")
         setIsFetchingMore(true);
         setLoading(pageNum === 0);
         try {
             const data = await dispatch(getPrdouctListData(pageNum)).unwrap();
             const updatedData = data?.products || [];
-            console.log(data.total, "data.total")
+
+            let newData = [...productsList.products, ...updatedData]
+            console.log(newData.length, "newData.total")
             setProductsList((prev) => ({
                 products: pageNum === 0 ? updatedData : [...prev.products, ...updatedData],
                 skip: data.skip,
@@ -134,13 +137,13 @@ const HomeScreen = () => {
                         <AnimatedFlashListCustom
                             numColumns={2}
                             data={
-                                productsListBySearch?.length > 0 || serachKeybaord?.length > 0
+                                (productsListBySearch?.length > 0 || serachKeybaord?.length > 0) && serachKeybaord.length
                                     ? productsListBySearch
                                     : productsList.products
                             }
                             onEndReached={() => {
                                 // console.log(productsList.products.length, productsList.total, "productsList.products.length, productsList.total");
-                                if (!isFetchingMore && !serachKeybaord && productsList.products.length < productsList.total) {
+                                if (!isFetchingMore && !serachKeybaord.length && productsList.products.length < productsList.total) {
                                     setPage((prevPage) => prevPage + 1);
                                 } else {
                                     console.log(page, "page Not Update");
